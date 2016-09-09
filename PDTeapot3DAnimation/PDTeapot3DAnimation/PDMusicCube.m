@@ -172,7 +172,11 @@ void TeardownOpenAL()
 
 - (void)dealloc
 {
-    if (_data) free(_data);
+    
+    if (_data) {
+        free(_data);
+        _data = NULL;
+    }
     
     [self teardownOpenAL];
 }
@@ -193,8 +197,6 @@ void TeardownOpenAL()
     if (fileURL)
     {
         _data = MyGetOpenALAudioData(fileURL, &size, &format, &freq);
-        CFRelease(fileURL);
-        
         if((error = alGetError()) != AL_NO_ERROR) {
             printf("error loading sound: %x\n", error);
             exit(1);
@@ -204,9 +206,7 @@ void TeardownOpenAL()
         if((error = alGetError()) != AL_NO_ERROR) {
             printf("error attaching audio to buffer: %x\n", error);
         }
-    }
-    else
-    {
+    } else {
         printf("Could not find file!\n");
         _data = NULL;
     }
@@ -258,6 +258,7 @@ void TeardownOpenAL()
     
     [self initBuffer];
     [self initSource];
+    
 }
 
 - (void)teardownOpenAL
@@ -279,9 +280,20 @@ void TeardownOpenAL()
 - (void)startSound
 {
     ALenum error;
-    
+//    // 判断设备是否开启声音
+//    if ([[AVAudioSession sharedInstance] respondsToSelector:@selector(requestRecordPermission:)]) {
+//        [[AVAudioSession sharedInstance] performSelector:@selector(requestRecordPermission:) withObject:^(BOOL granted) {
+//            if (granted) {
+//                NSLog(@"设备声音正常");
+//            } else {
+//                NSLog(@"设备声音不可用");
+//                return ;
+//            }
+//        }];
+//    }
     printf("Start!\n");
     alSourcePlay(_source);
+    
     if((error = alGetError()) != AL_NO_ERROR) {
         printf("error starting source: %x\n", error);
     } else {

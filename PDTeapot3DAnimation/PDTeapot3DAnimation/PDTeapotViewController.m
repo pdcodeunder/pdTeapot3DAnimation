@@ -82,6 +82,8 @@
     self.musicCube.listenerPos[2] = 0;
     self.musicCube.listenerRotation = 0;
     [self.musicCube startSound];
+    
+    
 }
 
 #pragma mark - 重绘
